@@ -43,6 +43,12 @@ func InitDB(path string) (*sql.DB, error) {
 			color      TEXT NOT NULL DEFAULT 'gray',
 			sort_order INTEGER DEFAULT 0
 		);
+		CREATE TABLE IF NOT EXISTS nanny_config (
+			id             INTEGER PRIMARY KEY CHECK (id = 1),
+			monthly_salary REAL    NOT NULL DEFAULT 0,
+			first_payday   TEXT    NOT NULL DEFAULT '',
+			updated_at     DATETIME DEFAULT CURRENT_TIMESTAMP
+		);
 	`)
 	if err != nil {
 		return nil, fmt.Errorf("create tables: %w", err)

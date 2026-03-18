@@ -34,7 +34,10 @@ func main() {
 
 	// 注册路由
 	h := handler.New(db)
-	r.GET("/", h.List)
+	r.GET("/", h.Home)
+	r.GET("/nanny-salary", h.NannySalary)
+	r.POST("/nanny-salary/config", h.NannySaveConfig)
+	r.GET("/clothes", h.List)
 	r.GET("/clothes/new", h.NewForm)
 	r.POST("/clothes", h.Create)
 	r.GET("/clothes/:id", h.Detail)
