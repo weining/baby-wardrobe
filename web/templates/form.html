@@ -42,12 +42,19 @@
           {{end}}
         </div>
         <div>
-          <label for="photo" class="cursor-pointer inline-block bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-            {{if $cloth.ThumbPath}}更换照片{{else}}选择照片{{end}}
-          </label>
-          <input type="file" id="photo" name="photo" accept="image/*" capture="environment"
+          <div class="flex flex-wrap gap-2">
+            <label for="photo-camera" class="cursor-pointer inline-block bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              {{if $cloth.ThumbPath}}重新拍照{{else}}拍照{{end}}
+            </label>
+            <label for="photo-library" class="cursor-pointer inline-block bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              {{if $cloth.ThumbPath}}从相册更换{{else}}从相册选择{{end}}
+            </label>
+          </div>
+          <input type="file" id="photo-camera" name="photo" accept="image/*" capture="environment"
                  class="hidden" onchange="previewPhoto(this)">
-          <p class="text-xs text-gray-400 mt-2">支持拍照或从相册选取</p>
+          <input type="file" id="photo-library" name="photo" accept="image/*"
+                 class="hidden" onchange="previewPhoto(this)">
+          <p class="text-xs text-gray-400 mt-2">安卓端可分别使用拍照或相册选择</p>
         </div>
       </div>
     </div>
