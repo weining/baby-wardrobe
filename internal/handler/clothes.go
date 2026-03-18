@@ -20,13 +20,13 @@ func (h *Handler) List(c *gin.Context) {
 
 	clothes, err := repository.ListClothes(h.db, filter)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		internalError(c, err)
 		return
 	}
 
 	stats, err := repository.GetStats(h.db)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		internalError(c, err)
 		return
 	}
 
@@ -34,9 +34,9 @@ func (h *Handler) List(c *gin.Context) {
 		"clothes":    clothes,
 		"stats":      stats,
 		"filter":     filter,
-		"categories": model.Categories,
+		"categories": h.categories(),
 		"seasons":    model.Seasons,
-		"statuses":   model.StatusOptions,
+		"statuses":   h.statuses(),
 	})
 }
 
@@ -44,9 +44,9 @@ func (h *Handler) NewForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "form", gin.H{
 		"title":      "添加衣物",
 		"cloth":      model.Cloth{Status: model.StatusWearing},
-		"categories": model.Categories,
+		"categories": h.categories(),
 		"seasons":    model.Seasons,
-		"statuses":   model.StatusOptions,
+		"statuses":   h.statuses(),
 	})
 }
 
@@ -57,7 +57,6 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	// 处理照片上传
 	file, header, err := c.Request.FormFile("photo")
 	if err == nil {
 		defer file.Close()
@@ -70,7 +69,7 @@ func (h *Handler) Create(c *gin.Context) {
 
 	id, err := repository.CreateCloth(h.db, cloth)
 	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		internalError(c, err)
 		return
 	}
 
@@ -90,7 +89,13 @@ func (h *Handler) Detail(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "detail", gin.H{"cloth": cloth})
+	statuses := h.statuses()
+	c.HTML(http.StatusOK, "detail", gin.H{
+		"cloth":       cloth,
+		"statuses":    statuses,
+		"statusLabel": h.statusLabel(cloth.Status),
+		"statusColor": h.statusColor(cloth.Status),
+	})
 }
 
 func (h *Handler) EditForm(c *gin.Context) {
@@ -109,9 +114,9 @@ func (h *Handler) EditForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "form", gin.H{
 		"title":      "编辑衣物",
 		"cloth":      cloth,
-		"categories": model.Categories,
+		"categories": h.categories(),
 		"seasons":    model.Seasons,
-		"statuses":   model.StatusOptions,
+		"statuses":   h.statuses(),
 	})
 }
 
@@ -137,7 +142,6 @@ func (h *Handler) Update(c *gin.Context) {
 	cloth.PhotoPath = existing.PhotoPath
 	cloth.ThumbPath = existing.ThumbPath
 
-	// 如果上传了新照片，替换旧照片
 	file, header, err := c.Request.FormFile("photo")
 	if err == nil {
 		defer file.Close()
@@ -152,7 +156,7 @@ func (h *Handler) Update(c *gin.Context) {
 	}
 
 	if err := repository.UpdateCloth(h.db, cloth); err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		internalError(c, err)
 		return
 	}
 
@@ -173,7 +177,7 @@ func (h *Handler) Delete(c *gin.Context) {
 	}
 
 	if err := repository.DeleteCloth(h.db, id); err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
+		internalError(c, err)
 		return
 	}
 

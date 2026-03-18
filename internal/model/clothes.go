@@ -29,42 +29,31 @@ const (
 	StatusDonated  = "donated"
 )
 
-var Categories = []string{
-	CategoryTop, CategoryBottom, CategoryOuter,
-	CategoryShoes, CategoryPajamas, CategoryAccess, CategoryOther,
-}
-
+// Seasons 固定不变
 var Seasons = []string{
 	SeasonSpringAutumn, SeasonSummer, SeasonWinter, SeasonAllYear,
 }
 
-var StatusOptions = []struct {
-	Value string
-	Label string
-	Color string
-}{
-	{StatusWearing, "在穿", "green"},
-	{StatusStored, "收纳中", "blue"},
-	{StatusOutgrown, "已小", "yellow"},
-	{StatusDonated, "已捐出", "gray"},
+// DefaultCategories 数据库为空时的种子数据
+var DefaultCategories = []string{
+	CategoryTop, CategoryBottom, CategoryOuter,
+	CategoryShoes, CategoryPajamas, CategoryAccess, CategoryOther,
 }
 
-func StatusLabel(status string) string {
-	for _, s := range StatusOptions {
-		if s.Value == status {
-			return s.Label
-		}
-	}
-	return status
+// Status 表示一个衣物状态，存储在数据库中
+type Status struct {
+	ID    int64
+	Value string // 唯一键，如 "wearing"
+	Label string // 显示名，如 "在穿"
+	Color string // green / blue / yellow / gray / red / purple
 }
 
-func StatusColor(status string) string {
-	for _, s := range StatusOptions {
-		if s.Value == status {
-			return s.Color
-		}
-	}
-	return "gray"
+// DefaultStatuses 数据库为空时的种子数据
+var DefaultStatuses = []Status{
+	{Value: StatusWearing, Label: "在穿", Color: "green"},
+	{Value: StatusStored, Label: "收纳中", Color: "blue"},
+	{Value: StatusOutgrown, Label: "已小", Color: "yellow"},
+	{Value: StatusDonated, Label: "已捐出", Color: "gray"},
 }
 
 type Cloth struct {
@@ -83,5 +72,5 @@ type Cloth struct {
 	UpdatedAt time.Time
 }
 
-func (c *Cloth) StatusLabel() string { return StatusLabel(c.Status) }
-func (c *Cloth) StatusColor() string { return StatusColor(c.Status) }
+func (c *Cloth) StatusLabel() string { return c.Status }
+func (c *Cloth) StatusColor() string { return "gray" }

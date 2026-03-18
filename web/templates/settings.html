@@ -1,0 +1,157 @@
+{{define "settings"}}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设置 - 宝宝衣橱</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<nav class="bg-white shadow-sm sticky top-0 z-10">
+  <div class="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+    <a href="/" class="text-gray-500 hover:text-gray-700">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </a>
+    <span class="text-lg font-bold text-gray-800">设置</span>
+  </div>
+</nav>
+
+<div class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+
+  {{if .error}}
+  <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
+    {{.error}}
+  </div>
+  {{end}}
+
+  <!-- 类别管理 -->
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="px-4 py-3 border-b border-gray-100">
+      <h2 class="font-semibold text-gray-800">类别管理</h2>
+      <p class="text-xs text-gray-400 mt-0.5">管理衣物分类，有衣物的类别无法删除</p>
+    </div>
+
+    <!-- 现有类别 -->
+    <div class="divide-y divide-gray-50">
+      {{range .categories}}
+      <div class="flex items-center justify-between px-4 py-3">
+        <span class="text-sm text-gray-800">{{.}}</span>
+        <form method="POST" action="/settings/categories/{{.}}/delete"
+              onsubmit="return confirm('确定删除类别「{{.}}」？')">
+          <button type="submit" class="text-xs text-red-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50 transition-colors">
+            删除
+          </button>
+        </form>
+      </div>
+      {{end}}
+    </div>
+
+    <!-- 添加类别 -->
+    <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
+      <form method="POST" action="/settings/categories" class="flex gap-2">
+        <input type="text" name="name" placeholder="新类别名称，如：连体衣"
+               required
+               class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+        <button type="submit"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          添加
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 状态管理 -->
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="px-4 py-3 border-b border-gray-100">
+      <h2 class="font-semibold text-gray-800">状态管理</h2>
+      <p class="text-xs text-gray-400 mt-0.5">管理衣物状态标签，有衣物的状态无法删除</p>
+    </div>
+
+    <!-- 现有状态（可编辑名称和颜色） -->
+    <div class="divide-y divide-gray-50">
+      {{range .statuses}}
+      <form method="POST" action="/settings/statuses/{{.ID}}/edit">
+        <div class="px-4 py-3 flex items-center gap-3">
+          <!-- 颜色预览 -->
+          <span class="flex-shrink-0 text-xs px-2 py-1 rounded-full
+            {{if eq .Color "green"}}bg-green-100 text-green-700
+            {{else if eq .Color "blue"}}bg-blue-100 text-blue-700
+            {{else if eq .Color "yellow"}}bg-yellow-100 text-yellow-700
+            {{else if eq .Color "red"}}bg-red-100 text-red-700
+            {{else if eq .Color "purple"}}bg-purple-100 text-purple-700
+            {{else}}bg-gray-100 text-gray-600{{end}}">
+            {{.Label}}
+          </span>
+
+          <!-- 标识（只读） -->
+          <span class="text-xs text-gray-400 font-mono">{{.Value}}</span>
+
+          <!-- 名称编辑 -->
+          <input type="text" name="label" value="{{.Label}}" required
+                 class="flex-1 border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-400 min-w-0">
+
+          <!-- 颜色选择 -->
+          <select name="color"
+                  class="border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-400">
+            {{range $.colors}}
+            <option value="{{.Value}}" {{if eq .Value $.Color}}selected{{end}}>{{.Label}}</option>
+            {{end}}
+          </select>
+
+          <button type="submit" class="text-xs text-blue-500 hover:text-blue-700 px-2 py-1 rounded hover:bg-blue-50 transition-colors flex-shrink-0">
+            保存
+          </button>
+        </div>
+      </form>
+
+      <!-- 删除按钮单独一行 -->
+      <div class="px-4 pb-2 flex justify-end">
+        <form method="POST" action="/settings/statuses/{{.ID}}/delete"
+              onsubmit="return confirm('确定删除状态「{{.Label}}」？')">
+          <button type="submit" class="text-xs text-red-400 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50 transition-colors">
+            删除
+          </button>
+        </form>
+      </div>
+      {{end}}
+    </div>
+
+    <!-- 添加状态 -->
+    <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
+      <p class="text-xs text-gray-500 mb-2">添加新状态</p>
+      <form method="POST" action="/settings/statuses" class="space-y-2">
+        <div class="flex gap-2">
+          <div class="flex-1">
+            <input type="text" name="value" placeholder="唯一标识（英文），如：lending"
+                   required pattern="[a-z_]+"
+                   class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+            <p class="text-xs text-gray-400 mt-1">仅小写字母和下划线</p>
+          </div>
+          <input type="text" name="label" placeholder="显示名称，如：借出"
+                 required
+                 class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+        </div>
+        <div class="flex gap-2">
+          <select name="color"
+                  class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+            {{range .colors}}
+            <option value="{{.Value}}">{{.Label}}</option>
+            {{end}}
+          </select>
+          <button type="submit"
+                  class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            添加
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
+{{end}}

@@ -42,6 +42,14 @@ func main() {
 	r.POST("/clothes/:id/edit", h.Update)
 	r.POST("/clothes/:id/delete", h.Delete)
 
+	// 设置路由
+	r.GET("/settings", h.Settings)
+	r.POST("/settings/categories", h.AddCategory)
+	r.POST("/settings/categories/:name/delete", h.DeleteCategory)
+	r.POST("/settings/statuses", h.AddStatus)
+	r.POST("/settings/statuses/:id/edit", h.UpdateStatus)
+	r.POST("/settings/statuses/:id/delete", h.DeleteStatus)
+
 	log.Println("服务已启动: http://0.0.0.0:8080")
 	log.Println("局域网访问: 在家庭设备浏览器输入 http://<本机IP>:8080")
 	if err := r.Run(":8080"); err != nil {
