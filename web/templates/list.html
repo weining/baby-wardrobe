@@ -1,0 +1,132 @@
+{{define "list"}}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宝宝衣橱</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- 顶部导航 -->
+<nav class="bg-white shadow-sm sticky top-0 z-10">
+  <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+    <span class="text-lg font-bold text-gray-800">宝宝衣橱</span>
+    <a href="/clothes/new"
+       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+      + 添加衣物
+    </a>
+  </div>
+</nav>
+
+<div class="max-w-3xl mx-auto px-4 py-5">
+
+  <!-- 统计卡片 -->
+  <div class="grid grid-cols-4 gap-3 mb-5">
+    <div class="bg-white rounded-xl p-3 text-center shadow-sm">
+      <div class="text-2xl font-bold text-gray-800">{{.stats.Total}}</div>
+      <div class="text-xs text-gray-500 mt-1">全部</div>
+    </div>
+    <div class="bg-green-50 rounded-xl p-3 text-center shadow-sm">
+      <div class="text-2xl font-bold text-green-600">{{.stats.Wearing}}</div>
+      <div class="text-xs text-green-500 mt-1">在穿</div>
+    </div>
+    <div class="bg-blue-50 rounded-xl p-3 text-center shadow-sm">
+      <div class="text-2xl font-bold text-blue-600">{{.stats.Stored}}</div>
+      <div class="text-xs text-blue-500 mt-1">收纳</div>
+    </div>
+    <div class="bg-yellow-50 rounded-xl p-3 text-center shadow-sm">
+      <div class="text-2xl font-bold text-yellow-600">{{.stats.Outgrown}}</div>
+      <div class="text-xs text-yellow-500 mt-1">已小</div>
+    </div>
+  </div>
+
+  <!-- 筛选栏 -->
+  <form method="GET" action="/" class="bg-white rounded-xl shadow-sm p-4 mb-5">
+    <div class="grid grid-cols-3 gap-3">
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">类别</label>
+        <select name="category" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+          <option value="">全部</option>
+          {{range .categories}}
+          <option value="{{.}}" {{if eq . $.filter.Category}}selected{{end}}>{{.}}</option>
+          {{end}}
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">季节</label>
+        <select name="season" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+          <option value="">全部</option>
+          {{range .seasons}}
+          <option value="{{.}}" {{if eq . $.filter.Season}}selected{{end}}>{{.}}</option>
+          {{end}}
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-500 mb-1">状态</label>
+        <select name="status" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+          <option value="">全部</option>
+          {{range .statuses}}
+          <option value="{{.Value}}" {{if eq .Value $.filter.Status}}selected{{end}}>{{.Label}}</option>
+          {{end}}
+        </select>
+      </div>
+    </div>
+    <div class="flex gap-2 mt-3">
+      <button type="submit" class="flex-1 bg-blue-500 text-white rounded-lg py-2 text-sm font-medium">筛选</button>
+      <a href="/" class="px-4 bg-gray-100 text-gray-600 rounded-lg py-2 text-sm text-center">重置</a>
+    </div>
+  </form>
+
+  <!-- 衣物列表 -->
+  {{if .clothes}}
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+    {{range .clothes}}
+    <a href="/clothes/{{.ID}}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+      <!-- 照片 -->
+      <div class="aspect-square bg-gray-100 overflow-hidden">
+        {{if .ThumbPath}}
+        <img src="{{.ThumbPath}}" alt="{{.Name}}"
+             class="w-full h-full object-cover">
+        {{else}}
+        <div class="w-full h-full flex items-center justify-center text-4xl text-gray-300">
+          {{if eq .Category "鞋子"}}👟
+          {{else if eq .Category "外套"}}🧥
+          {{else if eq .Category "睡衣"}}🛌
+          {{else}}👕{{end}}
+        </div>
+        {{end}}
+      </div>
+      <!-- 信息 -->
+      <div class="p-3">
+        <div class="font-medium text-gray-800 text-sm truncate">{{.Name}}</div>
+        <div class="flex items-center justify-between mt-1">
+          <span class="text-xs text-gray-500">{{.Size}} · {{.Season}}</span>
+          <!-- 状态徽章 -->
+          <span class="text-xs px-2 py-0.5 rounded-full
+            {{if eq .Status "wearing"}}bg-green-100 text-green-700
+            {{else if eq .Status "stored"}}bg-blue-100 text-blue-700
+            {{else if eq .Status "outgrown"}}bg-yellow-100 text-yellow-700
+            {{else}}bg-gray-100 text-gray-600{{end}}">
+            {{.StatusLabel}}
+          </span>
+        </div>
+      </div>
+    </a>
+    {{end}}
+  </div>
+  {{else}}
+  <div class="text-center py-16 text-gray-400">
+    <div class="text-5xl mb-4">👕</div>
+    <p class="text-lg">还没有衣物记录</p>
+    <a href="/clothes/new" class="inline-block mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg text-sm">
+      添加第一件衣物
+    </a>
+  </div>
+  {{end}}
+
+</div>
+</body>
+</html>
+{{end}}

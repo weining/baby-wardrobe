@@ -1,0 +1,165 @@
+{{define "detail"}}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.cloth.Name}} - 宝宝衣橱</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- 顶部导航 -->
+<nav class="bg-white shadow-sm sticky top-0 z-10">
+  <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="/" class="text-gray-500 hover:text-gray-700">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <span class="text-lg font-bold text-gray-800 truncate max-w-[180px]">{{.cloth.Name}}</span>
+    </div>
+    <a href="/clothes/{{.cloth.ID}}/edit"
+       class="text-blue-500 hover:text-blue-600 text-sm font-medium">编辑</a>
+  </div>
+</nav>
+
+<div class="max-w-2xl mx-auto">
+
+  <!-- 照片 -->
+  {{if .cloth.PhotoPath}}
+  <div class="bg-black">
+    <img src="{{.cloth.PhotoPath}}" alt="{{.cloth.Name}}"
+         class="w-full max-h-96 object-contain mx-auto">
+  </div>
+  {{else}}
+  <div class="bg-gray-200 flex items-center justify-center" style="height: 240px;">
+    <span class="text-7xl text-gray-400">
+      {{if eq .cloth.Category "鞋子"}}👟
+      {{else if eq .cloth.Category "外套"}}🧥
+      {{else if eq .cloth.Category "睡衣"}}🛌
+      {{else}}👕{{end}}
+    </span>
+  </div>
+  {{end}}
+
+  <!-- 详情卡片 -->
+  <div class="px-4 py-5 space-y-4">
+
+    <!-- 标题和状态 -->
+    <div class="bg-white rounded-xl shadow-sm p-4">
+      <div class="flex items-start justify-between gap-3">
+        <h1 class="text-xl font-bold text-gray-800">{{.cloth.Name}}</h1>
+        <span class="flex-shrink-0 text-sm px-3 py-1 rounded-full
+          {{if eq .cloth.Status "wearing"}}bg-green-100 text-green-700
+          {{else if eq .cloth.Status "stored"}}bg-blue-100 text-blue-700
+          {{else if eq .cloth.Status "outgrown"}}bg-yellow-100 text-yellow-700
+          {{else}}bg-gray-100 text-gray-600{{end}}">
+          {{.cloth.StatusLabel}}
+        </span>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">{{.cloth.Category}}</span>
+        <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">{{.cloth.Season}}</span>
+        <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">{{.cloth.Size}}</span>
+        {{if .cloth.Color}}
+        <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">{{.cloth.Color}}</span>
+        {{end}}
+      </div>
+    </div>
+
+    <!-- 详细信息 -->
+    <div class="bg-white rounded-xl shadow-sm p-4 space-y-3">
+      {{if .cloth.Brand}}
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500">品牌</span>
+        <span class="text-gray-800 font-medium">{{.cloth.Brand}}</span>
+      </div>
+      {{end}}
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-500">添加时间</span>
+        <span class="text-gray-800">{{.cloth.CreatedAt.Format "2006-01-02"}}</span>
+      </div>
+      {{if .cloth.Notes}}
+      <div class="pt-2 border-t border-gray-100">
+        <p class="text-xs text-gray-500 mb-1">备注</p>
+        <p class="text-sm text-gray-700">{{.cloth.Notes}}</p>
+      </div>
+      {{end}}
+    </div>
+
+    <!-- 快速修改状态 -->
+    <div class="bg-white rounded-xl shadow-sm p-4">
+      <p class="text-sm text-gray-500 mb-3">快速更新状态</p>
+      <div class="grid grid-cols-2 gap-2">
+        <form method="POST" action="/clothes/{{.cloth.ID}}/edit">
+          <input type="hidden" name="name" value="{{.cloth.Name}}">
+          <input type="hidden" name="category" value="{{.cloth.Category}}">
+          <input type="hidden" name="size" value="{{.cloth.Size}}">
+          <input type="hidden" name="season" value="{{.cloth.Season}}">
+          <input type="hidden" name="color" value="{{.cloth.Color}}">
+          <input type="hidden" name="brand" value="{{.cloth.Brand}}">
+          <input type="hidden" name="notes" value="{{.cloth.Notes}}">
+          <input type="hidden" name="status" value="stored">
+          <button type="submit" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg py-2 text-sm transition-colors">
+            收纳起来
+          </button>
+        </form>
+        <form method="POST" action="/clothes/{{.cloth.ID}}/edit">
+          <input type="hidden" name="name" value="{{.cloth.Name}}">
+          <input type="hidden" name="category" value="{{.cloth.Category}}">
+          <input type="hidden" name="size" value="{{.cloth.Size}}">
+          <input type="hidden" name="season" value="{{.cloth.Season}}">
+          <input type="hidden" name="color" value="{{.cloth.Color}}">
+          <input type="hidden" name="brand" value="{{.cloth.Brand}}">
+          <input type="hidden" name="notes" value="{{.cloth.Notes}}">
+          <input type="hidden" name="status" value="outgrown">
+          <button type="submit" class="w-full bg-yellow-50 hover:bg-yellow-100 text-yellow-700 rounded-lg py-2 text-sm transition-colors">
+            标记已小
+          </button>
+        </form>
+        <form method="POST" action="/clothes/{{.cloth.ID}}/edit">
+          <input type="hidden" name="name" value="{{.cloth.Name}}">
+          <input type="hidden" name="category" value="{{.cloth.Category}}">
+          <input type="hidden" name="size" value="{{.cloth.Size}}">
+          <input type="hidden" name="season" value="{{.cloth.Season}}">
+          <input type="hidden" name="color" value="{{.cloth.Color}}">
+          <input type="hidden" name="brand" value="{{.cloth.Brand}}">
+          <input type="hidden" name="notes" value="{{.cloth.Notes}}">
+          <input type="hidden" name="status" value="wearing">
+          <button type="submit" class="w-full bg-green-50 hover:bg-green-100 text-green-700 rounded-lg py-2 text-sm transition-colors">
+            标记在穿
+          </button>
+        </form>
+        <form method="POST" action="/clothes/{{.cloth.ID}}/edit">
+          <input type="hidden" name="name" value="{{.cloth.Name}}">
+          <input type="hidden" name="category" value="{{.cloth.Category}}">
+          <input type="hidden" name="size" value="{{.cloth.Size}}">
+          <input type="hidden" name="season" value="{{.cloth.Season}}">
+          <input type="hidden" name="color" value="{{.cloth.Color}}">
+          <input type="hidden" name="brand" value="{{.cloth.Brand}}">
+          <input type="hidden" name="notes" value="{{.cloth.Notes}}">
+          <input type="hidden" name="status" value="donated">
+          <button type="submit" class="w-full bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg py-2 text-sm transition-colors">
+            已捐出
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 删除按钮 -->
+    <form method="POST" action="/clothes/{{.cloth.ID}}/delete"
+          onsubmit="return confirm('确定删除「{{.cloth.Name}}」？此操作不可恢复。')">
+      <button type="submit"
+              class="w-full bg-red-50 hover:bg-red-100 text-red-500 rounded-xl py-3 text-sm font-medium transition-colors mb-6">
+        删除这件衣物
+      </button>
+    </form>
+
+  </div>
+</div>
+
+</body>
+</html>
+{{end}}
