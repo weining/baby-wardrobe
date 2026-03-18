@@ -349,7 +349,66 @@
 
 <div class="max-w-3xl mx-auto px-4 py-5" style="display:flex;flex-direction:column;gap:16px;">
 
-  <!-- 1. 基础设置 -->
+  <!-- 1. 日历 (hidden initially) -->
+  <div class="card" id="calendarCard" style="display:none;">
+    <div class="section-title">📅 工资日历</div>
+    <div class="calendar-nav">
+      <button class="cal-nav-btn" onclick="prevMonth()">‹</button>
+      <div class="cal-month-title" id="calTitle"></div>
+      <button class="cal-nav-btn" onclick="nextMonth()">›</button>
+    </div>
+    <div class="cal-grid" id="calWeekdays"></div>
+    <div class="cal-grid" id="calBody" style="margin-top:3px;"></div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:linear-gradient(135deg,#c8f0e0,#a8e4cc);"></div>
+        <span>发工资日</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:linear-gradient(135deg,#fef9e0,#fde68a);"></div>
+        <span>双倍工资日</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:rgba(224,120,96,0.18);"></div>
+        <span>请假日</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="box-shadow:0 0 0 2px var(--mint-deep);background:transparent;"></div>
+        <span>今天</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 请假管理 -->
+  <div class="card">
+    <div class="section-title">🌿 请假管理</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <label for="leaveStart">请假开始</label>
+        <input type="text" id="leaveStart" placeholder="2025-03-18" maxlength="10">
+      </div>
+      <div>
+        <label for="leaveEnd">请假结束</label>
+        <input type="text" id="leaveEnd" placeholder="2025-03-20" maxlength="10">
+      </div>
+    </div>
+    <button class="btn-sm" style="margin-bottom:12px;" onclick="addLeave()">＋ 添加请假记录</button>
+    <div id="leaveList"></div>
+  </div>
+
+  <!-- 3. 近期发工资日 (hidden initially) -->
+  <div class="card" id="upcomingCard" style="display:none;">
+    <div class="section-title">💵 近期发工资日</div>
+    <div id="upcomingList"></div>
+  </div>
+
+  <!-- 4. 结算概览 (hidden initially) -->
+  <div class="card" id="summaryCard" style="display:none;">
+    <div class="section-title">📊 结算概览</div>
+    <div id="summaryRows"></div>
+  </div>
+
+  <!-- 5. 基础设置 -->
   <div class="card">
     <div class="section-title">⚙ 基础设置</div>
     <!-- 已保存状态展示 -->
@@ -383,65 +442,6 @@
         <button id="cancelEditBtn" class="btn-sm" style="width:auto;padding:10px 16px;display:none;" onclick="cancelEdit()">取消</button>
       </div>
     </div>
-  </div>
-
-  <!-- 2. 请假管理 -->
-  <div class="card">
-    <div class="section-title">🌿 请假管理</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-      <div>
-        <label for="leaveStart">请假开始</label>
-        <input type="text" id="leaveStart" placeholder="2025-03-18" maxlength="10">
-      </div>
-      <div>
-        <label for="leaveEnd">请假结束</label>
-        <input type="text" id="leaveEnd" placeholder="2025-03-20" maxlength="10">
-      </div>
-    </div>
-    <button class="btn-sm" style="margin-bottom:12px;" onclick="addLeave()">＋ 添加请假记录</button>
-    <div id="leaveList"></div>
-  </div>
-
-  <!-- 3. 结算概览 (hidden initially) -->
-  <div class="card" id="summaryCard" style="display:none;">
-    <div class="section-title">📊 结算概览</div>
-    <div id="summaryRows"></div>
-  </div>
-
-  <!-- 4. 日历 (hidden initially) -->
-  <div class="card" id="calendarCard" style="display:none;">
-    <div class="section-title">📅 工资日历</div>
-    <div class="calendar-nav">
-      <button class="cal-nav-btn" onclick="prevMonth()">‹</button>
-      <div class="cal-month-title" id="calTitle"></div>
-      <button class="cal-nav-btn" onclick="nextMonth()">›</button>
-    </div>
-    <div class="cal-grid" id="calWeekdays"></div>
-    <div class="cal-grid" id="calBody" style="margin-top:3px;"></div>
-    <div class="legend">
-      <div class="legend-item">
-        <div class="legend-swatch" style="background:linear-gradient(135deg,#c8f0e0,#a8e4cc);"></div>
-        <span>发工资日</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-swatch" style="background:linear-gradient(135deg,#fef9e0,#fde68a);"></div>
-        <span>双倍工资日</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-swatch" style="background:rgba(224,120,96,0.18);"></div>
-        <span>请假日</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-swatch" style="box-shadow:0 0 0 2px var(--mint-deep);background:transparent;"></div>
-        <span>今天</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5. 近期发工资日 (hidden initially) -->
-  <div class="card" id="upcomingCard" style="display:none;">
-    <div class="section-title">💵 近期发工资日</div>
-    <div id="upcomingList"></div>
   </div>
 
   <div style="height:24px;"></div>
