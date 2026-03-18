@@ -181,7 +181,9 @@ type FilterParams struct {
 
 func ListClothes(db *sql.DB, f FilterParams) ([]model.Cloth, error) {
 	query := `SELECT id, name, category, size, season, status, color, brand,
-	          photo_path, thumb_path, notes, created_at, updated_at
+	          photo_path, thumb_path, notes,
+	          strftime('%Y-%m-%d %H:%M:%S', created_at),
+	          strftime('%Y-%m-%d %H:%M:%S', updated_at)
 	          FROM clothes WHERE 1=1`
 	args := []any{}
 
@@ -218,7 +220,9 @@ func ListClothes(db *sql.DB, f FilterParams) ([]model.Cloth, error) {
 
 func GetCloth(db *sql.DB, id int64) (model.Cloth, error) {
 	row := db.QueryRow(`SELECT id, name, category, size, season, status, color, brand,
-	    photo_path, thumb_path, notes, created_at, updated_at
+	    photo_path, thumb_path, notes,
+	    strftime('%Y-%m-%d %H:%M:%S', created_at),
+	    strftime('%Y-%m-%d %H:%M:%S', updated_at)
 	    FROM clothes WHERE id = ?`, id)
 	return scanCloth(row)
 }
@@ -244,8 +248,8 @@ func scanCloth(s scanner) (model.Cloth, error) {
 	c.ThumbPath = thumbPath.String
 	c.Notes = notes.String
 
-	c.CreatedAt, _ = time.Parse("2006-01-02 15:04:05", createdAt)
-	c.UpdatedAt, _ = time.Parse("2006-01-02 15:04:05", updatedAt)
+	c.CreatedAt, _ = parseTime(createdAt)
+	c.UpdatedAt, _ = parseTime(updatedAt)
 	return c, nil
 }
 
@@ -317,4 +321,20 @@ func GetStats(db *sql.DB) (Stats, error) {
 		}
 	}
 	return s, rows.Err()
+}
+
+var timeFormats = []string{
+	"2006-01-02 15:04:05",
+	"2006-01-02T15:04:05Z",
+	"2006-01-02T15:04:05",
+	time.RFC3339,
+}
+
+func parseTime(s string) (time.Time, error) {
+	for _, f := range timeFormats {
+		if t, err := time.Parse(f, s); err == nil {
+			return t, nil
+		}
+	}
+	return time.Time{}, fmt.Errorf("cannot parse time: %q", s)
 }
