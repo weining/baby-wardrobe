@@ -6,24 +6,186 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>宝宝衣橱</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #fdf8f3;
+      --warm-white: #fff9f5;
+      --blush: #f9ede8;
+      --rose: #e8a89c;
+      --rose-deep: #d4786a;
+      --mint: #e8f5f0;
+      --mint-deep: #7bb8a4;
+      --caramel: #c9956b;
+      --caramel-light: #f5ead8;
+      --text-warm: #5c4a3a;
+      --text-muted: #a09080;
+      --text-light: #c8b8a8;
+      --shadow-soft: 0 2px 12px rgba(200, 150, 120, 0.12);
+      --shadow-hover: 0 6px 24px rgba(200, 150, 120, 0.2);
+    }
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background-color: var(--cream);
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(249, 237, 232, 0.6) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(232, 245, 240, 0.5) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a899' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      min-height: 100vh;
+    }
+    .title-font { font-family: 'Noto Serif SC', serif; }
+    nav {
+      background: rgba(255, 252, 248, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(212, 178, 160, 0.2);
+    }
+    .card {
+      background: var(--warm-white);
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(212, 178, 160, 0.15);
+    }
+    .stat-card {
+      background: var(--warm-white);
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(212, 178, 160, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card:active { transform: scale(0.97); }
+    .clothes-card {
+      background: var(--warm-white);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(212, 178, 160, 0.15);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .clothes-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+    .badge-wearing  { background: #e8f5f0; color: #5a9e8a; }
+    .badge-stored   { background: #e8eef8; color: #6688bb; }
+    .badge-outgrown { background: #fdf3e3; color: #c9956b; }
+    .badge-default  { background: #f0eae4; color: #a09080; }
+    select, input[type="text"] {
+      background: var(--warm-white);
+      border: 1.5px solid rgba(212, 178, 160, 0.4);
+      border-radius: 12px;
+      color: var(--text-warm);
+      font-family: 'Noto Sans SC', sans-serif;
+    }
+    select:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(232, 168, 156, 0.18);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #e8a89c, #d4786a);
+      color: white;
+      border-radius: 12px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(212, 120, 106, 0.3);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #d4786a, #c06858);
+      box-shadow: 0 4px 14px rgba(212, 120, 106, 0.4);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--caramel-light);
+      color: var(--caramel);
+      border-radius: 12px;
+      border: 1.5px solid rgba(201, 149, 107, 0.3);
+    }
+    .add-btn {
+      background: linear-gradient(135deg, #e8a89c, #d4786a);
+      color: white;
+      border-radius: 24px;
+      font-weight: 500;
+      font-size: 0.875rem;
+      padding: 8px 18px;
+      box-shadow: 0 2px 10px rgba(212, 120, 106, 0.35);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .add-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(212, 120, 106, 0.45);
+    }
+    .section-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 64px 24px;
+      color: var(--text-muted);
+    }
+    .deco-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--rose);
+      opacity: 0.5;
+      display: inline-block;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.4s ease forwards; }
+    .clothes-card { opacity: 0; animation: fadeUp 0.4s ease forwards; }
+    .clothes-card:nth-child(1)  { animation-delay: 0.05s; }
+    .clothes-card:nth-child(2)  { animation-delay: 0.09s; }
+    .clothes-card:nth-child(3)  { animation-delay: 0.13s; }
+    .clothes-card:nth-child(4)  { animation-delay: 0.17s; }
+    .clothes-card:nth-child(5)  { animation-delay: 0.21s; }
+    .clothes-card:nth-child(6)  { animation-delay: 0.25s; }
+    .clothes-card:nth-child(7)  { animation-delay: 0.29s; }
+    .clothes-card:nth-child(8)  { animation-delay: 0.33s; }
+    .clothes-card:nth-child(9)  { animation-delay: 0.37s; }
+    .clothes-card:nth-child(n+10) { animation-delay: 0.4s; }
+    .filter-label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body>
 
 <!-- 顶部导航 -->
-<nav class="bg-white shadow-sm sticky top-0 z-10">
+<nav class="sticky top-0 z-10">
   <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-    <span class="text-lg font-bold text-gray-800">宝宝衣橱</span>
     <div class="flex items-center gap-2">
-      <a href="/settings" class="text-gray-400 hover:text-gray-600 p-2">
+      <span style="font-size:1.3rem;">🧺</span>
+      <span class="title-font text-lg font-semibold" style="color: var(--text-warm);">宝宝衣橱</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="/settings" style="color: var(--text-muted);" class="p-2 hover:opacity-70 transition-opacity">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                 d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
         </svg>
       </a>
-      <a href="/clothes/new"
-         class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        + 添加衣物
+      <a href="/clothes/new" class="add-btn">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        添加衣物
       </a>
     </div>
   </div>
@@ -32,31 +194,35 @@
 <div class="max-w-3xl mx-auto px-4 py-5">
 
   <!-- 统计卡片 -->
-  <div class="grid grid-cols-4 gap-3 mb-5">
-    <div class="bg-white rounded-xl p-3 text-center shadow-sm">
-      <div class="text-2xl font-bold text-gray-800">{{.stats.Total}}</div>
-      <div class="text-xs text-gray-500 mt-1">全部</div>
+  <div class="grid grid-cols-4 gap-3 mb-5 fade-up">
+    <div class="stat-card p-3 text-center">
+      <div class="text-2xl font-semibold title-font" style="color: var(--text-warm);">{{.stats.Total}}</div>
+      <div class="section-title mt-1.5">全部</div>
     </div>
-    <div class="bg-green-50 rounded-xl p-3 text-center shadow-sm">
-      <div class="text-2xl font-bold text-green-600">{{.stats.Wearing}}</div>
-      <div class="text-xs text-green-500 mt-1">在穿</div>
+    <div class="stat-card p-3 text-center" style="background: #eef7f3; border-color: rgba(123,184,164,0.2);">
+      <div class="text-2xl font-semibold title-font" style="color: #5a9e8a;">{{.stats.Wearing}}</div>
+      <div class="section-title mt-1.5" style="color: #7bb8a4;">在穿</div>
     </div>
-    <div class="bg-blue-50 rounded-xl p-3 text-center shadow-sm">
-      <div class="text-2xl font-bold text-blue-600">{{.stats.Stored}}</div>
-      <div class="text-xs text-blue-500 mt-1">收纳</div>
+    <div class="stat-card p-3 text-center" style="background: #edf1f9; border-color: rgba(102,136,187,0.2);">
+      <div class="text-2xl font-semibold title-font" style="color: #6688bb;">{{.stats.Stored}}</div>
+      <div class="section-title mt-1.5" style="color: #8899cc;">收纳</div>
     </div>
-    <div class="bg-yellow-50 rounded-xl p-3 text-center shadow-sm">
-      <div class="text-2xl font-bold text-yellow-600">{{.stats.Outgrown}}</div>
-      <div class="text-xs text-yellow-500 mt-1">已小</div>
+    <div class="stat-card p-3 text-center" style="background: #fdf3e5; border-color: rgba(201,149,107,0.2);">
+      <div class="text-2xl font-semibold title-font" style="color: #c9956b;">{{.stats.Outgrown}}</div>
+      <div class="section-title mt-1.5" style="color: #c9956b;">已小</div>
     </div>
   </div>
 
   <!-- 筛选栏 -->
-  <form method="GET" action="/" class="bg-white rounded-xl shadow-sm p-4 mb-5">
+  <form method="GET" action="/" class="card p-4 mb-5 fade-up" style="animation-delay: 0.08s;">
+    <div class="flex items-center gap-1.5 mb-3">
+      <span style="font-size:0.9rem;">🔍</span>
+      <span class="section-title">筛选</span>
+    </div>
     <div class="grid grid-cols-3 gap-3">
       <div>
-        <label class="block text-xs text-gray-500 mb-1">类别</label>
-        <select name="category" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+        <label class="filter-label">类别</label>
+        <select name="category" class="w-full px-3 py-2 text-sm">
           <option value="">全部</option>
           {{range .categories}}
           <option value="{{.}}" {{if eq . $.filter.Category}}selected{{end}}>{{.}}</option>
@@ -64,8 +230,8 @@
         </select>
       </div>
       <div>
-        <label class="block text-xs text-gray-500 mb-1">季节</label>
-        <select name="season" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+        <label class="filter-label">季节</label>
+        <select name="season" class="w-full px-3 py-2 text-sm">
           <option value="">全部</option>
           {{range .seasons}}
           <option value="{{.}}" {{if eq . $.filter.Season}}selected{{end}}>{{.}}</option>
@@ -73,8 +239,8 @@
         </select>
       </div>
       <div>
-        <label class="block text-xs text-gray-500 mb-1">状态</label>
-        <select name="status" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+        <label class="filter-label">状态</label>
+        <select name="status" class="w-full px-3 py-2 text-sm">
           <option value="">全部</option>
           {{range .statuses}}
           <option value="{{.Value}}" {{if eq .Value $.filter.Status}}selected{{end}}>{{.Label}}</option>
@@ -83,8 +249,8 @@
       </div>
     </div>
     <div class="flex gap-2 mt-3">
-      <button type="submit" class="flex-1 bg-blue-500 text-white rounded-lg py-2 text-sm font-medium">筛选</button>
-      <a href="/" class="px-4 bg-gray-100 text-gray-600 rounded-lg py-2 text-sm text-center">重置</a>
+      <button type="submit" class="btn-primary flex-1 py-2 text-sm">筛选</button>
+      <a href="/" class="btn-secondary px-4 py-2 text-sm text-center font-medium">重置</a>
     </div>
   </form>
 
@@ -92,32 +258,32 @@
   {{if .clothes}}
   <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
     {{range .clothes}}
-    <a href="/clothes/{{.ID}}" class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-      <!-- 照片 -->
-      <div class="aspect-square bg-gray-100 overflow-hidden">
+    <a href="/clothes/{{.ID}}" class="clothes-card block">
+      <!-- 照片区 -->
+      <div class="aspect-square overflow-hidden" style="background: #f5ede8;">
         {{if .ThumbPath}}
-        <img src="{{.ThumbPath}}" alt="{{.Name}}"
-             class="w-full h-full object-cover">
+        <img src="{{.ThumbPath}}" alt="{{.Name}}" class="w-full h-full object-cover">
         {{else}}
-        <div class="w-full h-full flex items-center justify-center text-4xl text-gray-300">
+        <div class="w-full h-full flex items-center justify-center" style="font-size: 3rem;">
           {{if eq .Category "鞋子"}}👟
           {{else if eq .Category "外套"}}🧥
           {{else if eq .Category "睡衣"}}🛌
+          {{else if eq .Category "帽子"}}🎩
+          {{else if eq .Category "袜子"}}🧦
           {{else}}👕{{end}}
         </div>
         {{end}}
       </div>
-      <!-- 信息 -->
+      <!-- 信息区 -->
       <div class="p-3">
-        <div class="font-medium text-gray-800 text-sm truncate">{{.Name}}</div>
-        <div class="flex items-center justify-between mt-1">
-          <span class="text-xs text-gray-500">{{.Size}} · {{.Season}}</span>
-          <!-- 状态徽章 -->
-          <span class="text-xs px-2 py-0.5 rounded-full
-            {{if eq .Status "wearing"}}bg-green-100 text-green-700
-            {{else if eq .Status "stored"}}bg-blue-100 text-blue-700
-            {{else if eq .Status "outgrown"}}bg-yellow-100 text-yellow-700
-            {{else}}bg-gray-100 text-gray-600{{end}}">
+        <div class="font-medium text-sm truncate" style="color: var(--text-warm);">{{.Name}}</div>
+        <div class="flex items-center justify-between mt-1.5">
+          <span class="text-xs" style="color: var(--text-muted);">{{.Size}} · {{.Season}}</span>
+          <span class="text-xs px-2 py-0.5 rounded-full font-medium
+            {{if eq .Status "wearing"}}badge-wearing
+            {{else if eq .Status "stored"}}badge-stored
+            {{else if eq .Status "outgrown"}}badge-outgrown
+            {{else}}badge-default{{end}}">
             {{.StatusLabel}}
           </span>
         </div>
@@ -126,15 +292,18 @@
     {{end}}
   </div>
   {{else}}
-  <div class="text-center py-16 text-gray-400">
-    <div class="text-5xl mb-4">👕</div>
-    <p class="text-lg">还没有衣物记录</p>
-    <a href="/clothes/new" class="inline-block mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg text-sm">
-      添加第一件衣物
+  <div class="empty-state fade-up" style="animation-delay: 0.12s;">
+    <div style="font-size: 4rem; margin-bottom: 12px; opacity: 0.6;">🧺</div>
+    <p class="title-font text-base mb-1" style="color: var(--text-warm);">还没有衣物记录</p>
+    <p class="text-sm mb-5" style="color: var(--text-light);">给宝宝的小衣橱添加第一件吧</p>
+    <a href="/clothes/new" class="btn-primary px-6 py-2.5 text-sm">
+      + 添加第一件衣物
     </a>
   </div>
   {{end}}
 
+  <!-- 底部留白 -->
+  <div class="h-8"></div>
 </div>
 </body>
 </html>

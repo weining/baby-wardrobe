@@ -6,94 +6,220 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{.cloth.Name}} - 宝宝衣橱</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #fdf8f3;
+      --warm-white: #fff9f5;
+      --blush: #f9ede8;
+      --rose: #e8a89c;
+      --rose-deep: #d4786a;
+      --caramel: #c9956b;
+      --caramel-light: #f5ead8;
+      --text-warm: #5c4a3a;
+      --text-muted: #a09080;
+      --text-light: #c8b8a8;
+      --shadow-soft: 0 2px 12px rgba(200, 150, 120, 0.12);
+    }
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background-color: var(--cream);
+      min-height: 100vh;
+    }
+    .title-font { font-family: 'Noto Serif SC', serif; }
+    nav {
+      background: rgba(255, 252, 248, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(212, 178, 160, 0.2);
+    }
+    .photo-area {
+      background: linear-gradient(160deg, #f5e8e0 0%, #e8eeea 100%);
+      position: relative;
+    }
+    .photo-area::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40px;
+      background: linear-gradient(to top, var(--cream), transparent);
+      pointer-events: none;
+    }
+    .card {
+      background: var(--warm-white);
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(212, 178, 160, 0.15);
+    }
+    .tag {
+      background: #f5eee8;
+      color: var(--caramel);
+      border: 1px solid rgba(201, 149, 107, 0.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+    }
+    .status-badge {
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+    .status-green  { background: #e8f5f0; color: #5a9e8a; }
+    .status-blue   { background: #e8eef8; color: #6688bb; }
+    .status-yellow { background: #fdf3e3; color: #c9956b; }
+    .status-red    { background: #fce8e8; color: #cc6666; }
+    .status-purple { background: #f0ebf8; color: #8866bb; }
+    .status-gray   { background: #f0eae4; color: #a09080; }
+    .quick-status-btn {
+      width: 100%;
+      border-radius: 12px;
+      padding: 10px 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      font-family: 'Noto Sans SC', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1.5px solid transparent;
+    }
+    .quick-green  { background: #eef8f4; color: #5a9e8a; border-color: rgba(90,158,138,0.2); }
+    .quick-green:hover  { background: #d8f0e8; border-color: rgba(90,158,138,0.4); }
+    .quick-blue   { background: #edf1f9; color: #6688bb; border-color: rgba(102,136,187,0.2); }
+    .quick-blue:hover   { background: #d8e4f4; border-color: rgba(102,136,187,0.4); }
+    .quick-yellow { background: #fdf5e8; color: #c9956b; border-color: rgba(201,149,107,0.2); }
+    .quick-yellow:hover { background: #faecd4; border-color: rgba(201,149,107,0.4); }
+    .quick-red    { background: #fdf0f0; color: #cc6666; border-color: rgba(204,102,102,0.2); }
+    .quick-red:hover    { background: #fae0e0; border-color: rgba(204,102,102,0.4); }
+    .quick-purple { background: #f5f0fc; color: #8866bb; border-color: rgba(136,102,187,0.2); }
+    .quick-purple:hover { background: #ede0f8; border-color: rgba(136,102,187,0.4); }
+    .quick-gray   { background: #f5f0ec; color: #a09080; border-color: rgba(160,144,128,0.2); }
+    .quick-gray:hover   { background: #ede8e0; border-color: rgba(160,144,128,0.35); }
+    .delete-btn {
+      width: 100%;
+      background: #fdf5f5;
+      color: #cc7777;
+      border: 1.5px solid rgba(204,119,119,0.2);
+      border-radius: 16px;
+      padding: 13px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: 'Noto Sans SC', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .delete-btn:hover { background: #fae8e8; border-color: rgba(204,102,102,0.4); }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+      padding: 8px 0;
+    }
+    .info-label { color: var(--text-muted); }
+    .info-value { color: var(--text-warm); font-weight: 500; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up   { animation: fadeUp 0.35s ease both; }
+    .fade-up-1 { animation: fadeUp 0.35s ease 0.06s both; }
+    .fade-up-2 { animation: fadeUp 0.35s ease 0.12s both; }
+    .fade-up-3 { animation: fadeUp 0.35s ease 0.18s both; }
+    .fade-up-4 { animation: fadeUp 0.35s ease 0.24s both; }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body>
 
 <!-- 顶部导航 -->
-<nav class="bg-white shadow-sm sticky top-0 z-10">
+<nav class="sticky top-0 z-10">
   <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <a href="/" class="text-gray-500 hover:text-gray-700">
+      <a href="/" style="color: var(--text-muted);" class="p-1 hover:opacity-70 transition-opacity">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 19l-7-7 7-7"/>
         </svg>
       </a>
-      <span class="text-lg font-bold text-gray-800 truncate max-w-[180px]">{{.cloth.Name}}</span>
+      <span class="title-font text-base font-semibold truncate max-w-[180px]" style="color: var(--text-warm);">{{.cloth.Name}}</span>
     </div>
     <a href="/clothes/{{.cloth.ID}}/edit"
-       class="text-blue-500 hover:text-blue-600 text-sm font-medium">编辑</a>
+       style="color: var(--rose-deep);" class="text-sm font-medium hover:opacity-70 transition-opacity">编辑</a>
   </div>
 </nav>
 
 <div class="max-w-2xl mx-auto">
 
   <!-- 照片 -->
-  {{if .cloth.PhotoPath}}
-  <div class="bg-black">
+  <div class="photo-area" style="min-height: 220px;">
+    {{if .cloth.PhotoPath}}
     <img src="{{.cloth.PhotoPath}}" alt="{{.cloth.Name}}"
-         class="w-full max-h-96 object-contain mx-auto">
+         class="w-full max-h-96 object-contain mx-auto" style="display: block;">
+    {{else}}
+    <div class="flex items-center justify-center" style="height: 220px;">
+      <span style="font-size: 5.5rem; opacity: 0.55; filter: drop-shadow(0 4px 12px rgba(180,120,100,0.2));">
+        {{if eq .cloth.Category "鞋子"}}👟
+        {{else if eq .cloth.Category "外套"}}🧥
+        {{else if eq .cloth.Category "睡衣"}}🛌
+        {{else if eq .cloth.Category "帽子"}}🎩
+        {{else if eq .cloth.Category "袜子"}}🧦
+        {{else}}👕{{end}}
+      </span>
+    </div>
+    {{end}}
   </div>
-  {{else}}
-  <div class="bg-gray-200 flex items-center justify-center" style="height: 240px;">
-    <span class="text-7xl text-gray-400">
-      {{if eq .cloth.Category "鞋子"}}👟
-      {{else if eq .cloth.Category "外套"}}🧥
-      {{else if eq .cloth.Category "睡衣"}}🛌
-      {{else}}👕{{end}}
-    </span>
-  </div>
-  {{end}}
 
-  <!-- 详情卡片 -->
   <div class="px-4 py-5 space-y-4">
 
-    <!-- 标题和状态 -->
-    <div class="bg-white rounded-xl shadow-sm p-4">
-      <div class="flex items-start justify-between gap-3">
-        <h1 class="text-xl font-bold text-gray-800">{{.cloth.Name}}</h1>
-        <span class="flex-shrink-0 text-sm px-3 py-1 rounded-full
-          {{if eq .statusColor "green"}}bg-green-100 text-green-700
-          {{else if eq .statusColor "blue"}}bg-blue-100 text-blue-700
-          {{else if eq .statusColor "yellow"}}bg-yellow-100 text-yellow-700
-          {{else if eq .statusColor "red"}}bg-red-100 text-red-700
-          {{else if eq .statusColor "purple"}}bg-purple-100 text-purple-700
-          {{else}}bg-gray-100 text-gray-600{{end}}">
+    <!-- 名称和状态 -->
+    <div class="card p-4 fade-up">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <h1 class="title-font text-xl font-semibold" style="color: var(--text-warm);">{{.cloth.Name}}</h1>
+        <span class="status-badge flex-shrink-0
+          {{if eq .statusColor "green"}}status-green
+          {{else if eq .statusColor "blue"}}status-blue
+          {{else if eq .statusColor "yellow"}}status-yellow
+          {{else if eq .statusColor "red"}}status-red
+          {{else if eq .statusColor "purple"}}status-purple
+          {{else}}status-gray{{end}}">
           {{.statusLabel}}
         </span>
       </div>
-      <div class="flex flex-wrap gap-2 mt-3">
-        <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">{{.cloth.Category}}</span>
-        <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">{{.cloth.Season}}</span>
-        <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">{{.cloth.Size}}</span>
+      <div class="flex flex-wrap gap-2">
+        <span class="tag">{{.cloth.Category}}</span>
+        <span class="tag">{{.cloth.Season}}</span>
+        <span class="tag">{{.cloth.Size}}</span>
         {{if .cloth.Color}}
-        <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">{{.cloth.Color}}</span>
+        <span class="tag">{{.cloth.Color}}</span>
         {{end}}
       </div>
     </div>
 
     <!-- 详细信息 -->
-    <div class="bg-white rounded-xl shadow-sm p-4 space-y-3">
+    <div class="card p-4 fade-up-1">
       {{if .cloth.Brand}}
-      <div class="flex justify-between text-sm">
-        <span class="text-gray-500">品牌</span>
-        <span class="text-gray-800 font-medium">{{.cloth.Brand}}</span>
+      <div class="info-row" style="border-bottom: 1px solid rgba(212,178,160,0.15);">
+        <span class="info-label">品牌</span>
+        <span class="info-value">{{.cloth.Brand}}</span>
       </div>
       {{end}}
-      <div class="flex justify-between text-sm">
-        <span class="text-gray-500">添加时间</span>
-        <span class="text-gray-800">{{.cloth.CreatedAt.Format "2006-01-02"}}</span>
+      <div class="info-row {{if .cloth.Notes}}border-b{{end}}" style="{{if .cloth.Notes}}border-color: rgba(212,178,160,0.15);{{end}}">
+        <span class="info-label">添加时间</span>
+        <span class="info-value">{{.cloth.CreatedAt.Format "2006年01月02日"}}</span>
       </div>
       {{if .cloth.Notes}}
-      <div class="pt-2 border-t border-gray-100">
-        <p class="text-xs text-gray-500 mb-1">备注</p>
-        <p class="text-sm text-gray-700">{{.cloth.Notes}}</p>
+      <div style="padding-top: 10px;">
+        <p style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 5px; letter-spacing: 0.05em;">备注</p>
+        <p style="font-size: 0.875rem; color: var(--text-warm); line-height: 1.6;">{{.cloth.Notes}}</p>
       </div>
       {{end}}
     </div>
 
     <!-- 快速修改状态 -->
-    <div class="bg-white rounded-xl shadow-sm p-4">
-      <p class="text-sm text-gray-500 mb-3">快速更新状态</p>
+    <div class="card p-4 fade-up-2">
+      <p style="font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.08em; margin-bottom: 12px;">
+        ✦ 快速更新状态
+      </p>
       <div class="grid grid-cols-2 gap-2">
         {{range .statuses}}
         <form method="POST" action="/clothes/{{$.cloth.ID}}/edit">
@@ -105,13 +231,13 @@
           <input type="hidden" name="brand"    value="{{$.cloth.Brand}}">
           <input type="hidden" name="notes"    value="{{$.cloth.Notes}}">
           <input type="hidden" name="status"   value="{{.Value}}">
-          <button type="submit" class="w-full rounded-lg py-2 text-sm transition-colors
-            {{if eq .Color "green"}}bg-green-50 hover:bg-green-100 text-green-700
-            {{else if eq .Color "blue"}}bg-blue-50 hover:bg-blue-100 text-blue-700
-            {{else if eq .Color "yellow"}}bg-yellow-50 hover:bg-yellow-100 text-yellow-700
-            {{else if eq .Color "red"}}bg-red-50 hover:bg-red-100 text-red-700
-            {{else if eq .Color "purple"}}bg-purple-50 hover:bg-purple-100 text-purple-700
-            {{else}}bg-gray-50 hover:bg-gray-100 text-gray-600{{end}}">
+          <button type="submit" class="quick-status-btn
+            {{if eq .Color "green"}}quick-green
+            {{else if eq .Color "blue"}}quick-blue
+            {{else if eq .Color "yellow"}}quick-yellow
+            {{else if eq .Color "red"}}quick-red
+            {{else if eq .Color "purple"}}quick-purple
+            {{else}}quick-gray{{end}}">
             {{.Label}}
           </button>
         </form>
@@ -121,13 +247,14 @@
 
     <!-- 删除按钮 -->
     <form method="POST" action="/clothes/{{.cloth.ID}}/delete"
-          onsubmit="return confirm('确定删除「{{.cloth.Name}}」？此操作不可恢复。')">
-      <button type="submit"
-              class="w-full bg-red-50 hover:bg-red-100 text-red-500 rounded-xl py-3 text-sm font-medium transition-colors mb-6">
+          onsubmit="return confirm('确定删除「{{.cloth.Name}}」？此操作不可恢复。')"
+          class="fade-up-3">
+      <button type="submit" class="delete-btn">
         删除这件衣物
       </button>
     </form>
 
+    <div class="h-6"></div>
   </div>
 </div>
 
