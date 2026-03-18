@@ -37,6 +37,8 @@ func main() {
 	r.GET("/", h.Home)
 	r.GET("/nanny-salary", h.NannySalary)
 	r.POST("/nanny-salary/config", h.NannySaveConfig)
+	r.POST("/nanny-salary/leaves", h.NannyAddLeave)
+	r.DELETE("/nanny-salary/leaves/:id", h.NannyDeleteLeave)
 	r.GET("/clothes", h.List)
 	r.GET("/clothes/new", h.NewForm)
 	r.POST("/clothes", h.Create)

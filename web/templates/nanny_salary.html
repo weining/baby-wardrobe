@@ -642,6 +642,13 @@ function fromStr(s) {
   const [y,m,d] = s.split('-').map(Number);
   return new Date(y,m-1,d);
 }
+function normalizeLeaveRange(r) {
+  return {
+    id: r.id || 0,
+    s: fromStr(r.start_date),
+    e: fromStr(r.end_date),
+  };
+}
 function addDays(d,n) {
   const r = new Date(d); r.setDate(r.getDate()+n); return r;
 }
@@ -787,19 +794,7 @@ function compute() { saveAndCompute(); }
 // ============================================================
 // LEAVE
 // ============================================================
-function addLeave() {
-  const s = document.getElementById('leaveStart').value.trim();
-  const e = document.getElementById('leaveEnd').value.trim();
-  if (!s || !e) { alert('请输入请假开始和结束日期'); return; }
-  const dateRe = /^\d{4}-\d{2}-\d{2}$/;
-  if (!dateRe.test(s) || !dateRe.test(e)) { alert('日期格式错误，请使用 YYYY-MM-DD，例如 2025-03-18'); return; }
-  const sd = fromStr(s), ed = fromStr(e);
-  if (isNaN(sd) || isNaN(ed)) { alert('日期无效，请检查格式'); return; }
-  if (sd > ed) { alert('开始日期不能晚于结束日期'); return; }
-  leaveRanges.push({s: sd, e: ed});
-  leaveRanges.sort((a,b) => a.s - b.s);
-  document.getElementById('leaveStart').value = '';
-  document.getElementById('leaveEnd').value = '';
+function refreshAfterLeaveChange() {
   renderLeaveList();
   if (salary > 0 && paydays.length > 0) {
     paydays = computePaydays(paydays[0], 14);
@@ -809,15 +804,55 @@ function addLeave() {
   }
 }
 
-function removeLeave(idx) {
-  leaveRanges.splice(idx, 1);
-  renderLeaveList();
-  if (salary > 0 && paydays.length > 0) {
-    paydays = computePaydays(paydays[0], 14);
-    renderSummary();
-    renderUpcoming();
-    renderCalendar();
+async function addLeave() {
+  const s = document.getElementById('leaveStart').value.trim();
+  const e = document.getElementById('leaveEnd').value.trim();
+  if (!s || !e) { alert('请输入请假开始和结束日期'); return; }
+  const dateRe = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRe.test(s) || !dateRe.test(e)) { alert('日期格式错误，请使用 YYYY-MM-DD，例如 2025-03-18'); return; }
+  const sd = fromStr(s), ed = fromStr(e);
+  if (isNaN(sd) || isNaN(ed)) { alert('日期无效，请检查格式'); return; }
+  if (sd > ed) { alert('开始日期不能晚于结束日期'); return; }
+
+  let savedRange;
+  try {
+    const resp = await fetch('/nanny-salary/leaves', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ start_date: s, end_date: e }),
+    });
+    if (!resp.ok) throw new Error('save failed');
+    savedRange = await resp.json();
+  } catch (err) {
+    alert('请假记录保存失败，请稍后重试');
+    return;
   }
+
+  leaveRanges.push(normalizeLeaveRange(savedRange));
+  leaveRanges.sort((a,b) => a.s - b.s);
+  document.getElementById('leaveStart').value = '';
+  document.getElementById('leaveEnd').value = '';
+  refreshAfterLeaveChange();
+}
+
+async function removeLeave(idx) {
+  const target = leaveRanges[idx];
+  if (!target) return;
+
+  if (target.id) {
+    try {
+      const resp = await fetch('/nanny-salary/leaves/' + target.id, {
+        method: 'DELETE',
+      });
+      if (!resp.ok) throw new Error('delete failed');
+    } catch (err) {
+      alert('删除请假记录失败，请稍后重试');
+      return;
+    }
+  }
+
+  leaveRanges.splice(idx, 1);
+  refreshAfterLeaveChange();
 }
 
 function renderLeaveList() {
@@ -1039,6 +1074,8 @@ function nextMonth() {
 // INIT — load saved config from server (injected by Go template)
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
+  const savedLeaveRanges = {{.leaveRangesJSON}} || [];
+  leaveRanges = savedLeaveRanges.map(normalizeLeaveRange);
   renderLeaveList();
 
   const savedSalary  = {{if .config.MonthlySalary}}{{.config.MonthlySalary}}{{else}}0{{end}};
