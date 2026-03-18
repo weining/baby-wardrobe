@@ -6,18 +6,174 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{.title}} - 宝宝衣橱</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #fdf8f3;
+      --warm-white: #fff9f5;
+      --blush: #f9ede8;
+      --rose: #e8a89c;
+      --rose-deep: #d4786a;
+      --caramel: #c9956b;
+      --caramel-light: #f5ead8;
+      --text-warm: #5c4a3a;
+      --text-muted: #a09080;
+      --text-light: #c8b8a8;
+      --shadow-soft: 0 2px 12px rgba(200, 150, 120, 0.12);
+    }
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background-color: var(--cream);
+      background-image:
+        radial-gradient(circle at 15% 30%, rgba(249, 237, 232, 0.7) 0%, transparent 45%),
+        radial-gradient(circle at 85% 70%, rgba(232, 245, 240, 0.5) 0%, transparent 45%);
+      min-height: 100vh;
+    }
+    .title-font { font-family: 'Noto Serif SC', serif; }
+    nav {
+      background: rgba(255, 252, 248, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(212, 178, 160, 0.2);
+    }
+    .card {
+      background: var(--warm-white);
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(212, 178, 160, 0.15);
+    }
+    .card-title {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    label.field-label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+    input[type="text"], textarea, select {
+      background: var(--cream);
+      border: 1.5px solid rgba(212, 178, 160, 0.35);
+      border-radius: 12px;
+      color: var(--text-warm);
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 0.875rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(232, 168, 156, 0.18);
+      background: white;
+    }
+    .photo-upload-zone {
+      width: 110px; height: 110px;
+      border-radius: 18px;
+      background: var(--blush);
+      border: 2px dashed rgba(232, 168, 156, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .photo-upload-zone:hover { border-color: var(--rose); background: #f7e8e4; }
+    .btn-camera {
+      background: #fff0ec;
+      color: var(--rose-deep);
+      border: 1.5px solid rgba(232, 168, 156, 0.4);
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      font-family: 'Noto Sans SC', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-camera:hover { background: #fce0d8; border-color: var(--rose); }
+    .btn-gallery {
+      background: var(--caramel-light);
+      color: var(--caramel);
+      border: 1.5px solid rgba(201, 149, 107, 0.3);
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      font-family: 'Noto Sans SC', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-gallery:hover { background: #f0e0c8; }
+    .btn-save {
+      flex: 1;
+      background: linear-gradient(135deg, #e8a89c, #d4786a);
+      color: white;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-family: 'Noto Sans SC', sans-serif;
+      box-shadow: 0 3px 12px rgba(212, 120, 106, 0.35);
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-save:hover {
+      background: linear-gradient(135deg, #d4786a, #c06858);
+      box-shadow: 0 5px 18px rgba(212, 120, 106, 0.45);
+      transform: translateY(-1px);
+    }
+    .btn-cancel {
+      flex: 1;
+      background: var(--caramel-light);
+      color: var(--caramel);
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-align: center;
+      border: 1.5px solid rgba(201, 149, 107, 0.25);
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { background: #f0e0c8; }
+    .required-dot {
+      display: inline-block;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--rose);
+      margin-left: 3px;
+      vertical-align: middle;
+      margin-bottom: 2px;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.35s ease forwards; }
+    .fade-up-1 { animation: fadeUp 0.35s ease 0.05s both; }
+    .fade-up-2 { animation: fadeUp 0.35s ease 0.10s both; }
+    .fade-up-3 { animation: fadeUp 0.35s ease 0.15s both; }
+    .fade-up-4 { animation: fadeUp 0.35s ease 0.20s both; }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body>
 
 <!-- 顶部导航 -->
-<nav class="bg-white shadow-sm sticky top-0 z-10">
+<nav class="sticky top-0 z-10">
   <div class="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
-    <a href="/" class="text-gray-500 hover:text-gray-700">
+    <a href="/" style="color: var(--text-muted);" class="p-1 hover:opacity-70 transition-opacity">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 19l-7-7 7-7"/>
       </svg>
     </a>
-    <span class="text-lg font-bold text-gray-800">{{.title}}</span>
+    <span class="title-font text-base font-semibold" style="color: var(--text-warm);">{{.title}}</span>
   </div>
 </nav>
 
@@ -26,62 +182,65 @@
   {{$action := "/clothes"}}
   {{if $cloth.ID}}{{$action = printf "/clothes/%d/edit" $cloth.ID}}{{end}}
 
-  <form action="{{$action}}" method="POST" enctype="multipart/form-data" class="space-y-5">
+  <form action="{{$action}}" method="POST" enctype="multipart/form-data" class="space-y-4">
 
     <!-- 照片上传 -->
-    <div class="bg-white rounded-xl shadow-sm p-4">
-      <label class="block text-sm font-medium text-gray-700 mb-3">照片</label>
+    <div class="card p-5 fade-up">
+      <div class="card-title mb-4">
+        <span>📷</span>
+        <span>衣物照片</span>
+      </div>
       <div class="flex items-center gap-4">
-        <!-- 预览区 -->
-        <div id="preview-wrap" class="w-28 h-28 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 flex items-center justify-center">
+        <div class="photo-upload-zone" id="preview-wrap">
           {{if $cloth.ThumbPath}}
           <img id="preview" src="{{$cloth.ThumbPath}}" class="w-full h-full object-cover">
           {{else}}
           <img id="preview" class="w-full h-full object-cover hidden">
-          <span id="preview-placeholder" class="text-3xl text-gray-300">📷</span>
+          <span id="preview-placeholder" style="font-size: 2.5rem; opacity: 0.5;">🧸</span>
           {{end}}
         </div>
-        <div>
-          <div class="flex flex-wrap gap-2">
-            <label for="photo-camera" class="cursor-pointer inline-block bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-              {{if $cloth.ThumbPath}}重新拍照{{else}}拍照{{end}}
-            </label>
-            <label for="photo-library" class="cursor-pointer inline-block bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-              {{if $cloth.ThumbPath}}从相册更换{{else}}从相册选择{{end}}
-            </label>
-          </div>
+        <div class="flex flex-col gap-2">
+          <label for="photo-camera" class="btn-camera">
+            {{if $cloth.ThumbPath}}重新拍照{{else}}📸 拍照{{end}}
+          </label>
+          <label for="photo-library" class="btn-gallery">
+            {{if $cloth.ThumbPath}}从相册更换{{else}}🖼 从相册选择{{end}}
+          </label>
           <input type="file" id="photo-camera" name="photo" accept="image/*" capture="environment"
                  class="hidden" onchange="previewPhoto(this)">
           <input type="file" id="photo-library" name="photo" accept="image/*"
                  class="hidden" onchange="previewPhoto(this)">
-          <p class="text-xs text-gray-400 mt-2">安卓端可分别使用拍照或相册选择</p>
+          <p style="font-size: 0.7rem; color: var(--text-light);">安卓端可分别使用拍照或相册</p>
         </div>
       </div>
     </div>
 
     <!-- 基本信息 -->
-    <div class="bg-white rounded-xl shadow-sm p-4 space-y-4">
-      <h3 class="text-sm font-medium text-gray-700">基本信息</h3>
+    <div class="card p-5 space-y-4 fade-up-1">
+      <div class="card-title">
+        <span>✏️</span>
+        <span>基本信息</span>
+      </div>
 
       <div>
-        <label class="block text-sm text-gray-600 mb-1">名称 <span class="text-red-400">*</span></label>
+        <label class="field-label">名称 <span class="required-dot"></span></label>
         <input type="text" name="name" value="{{$cloth.Name}}" required
                placeholder="例：蓝色小熊卫衣"
-               class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400">
+               class="w-full px-3 py-2.5">
       </div>
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm text-gray-600 mb-1">类别 <span class="text-red-400">*</span></label>
-          <select name="category" required class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400">
+          <label class="field-label">类别 <span class="required-dot"></span></label>
+          <select name="category" required class="w-full px-3 py-2.5">
             {{range .categories}}
             <option value="{{.}}" {{if eq . $cloth.Category}}selected{{end}}>{{.}}</option>
             {{end}}
           </select>
         </div>
         <div>
-          <label class="block text-sm text-gray-600 mb-1">季节 <span class="text-red-400">*</span></label>
-          <select name="season" required class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400">
+          <label class="field-label">季节 <span class="required-dot"></span></label>
+          <select name="season" required class="w-full px-3 py-2.5">
             {{range .seasons}}
             <option value="{{.}}" {{if eq . $cloth.Season}}selected{{end}}>{{.}}</option>
             {{end}}
@@ -91,14 +250,14 @@
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm text-gray-600 mb-1">尺码 <span class="text-red-400">*</span></label>
+          <label class="field-label">尺码 <span class="required-dot"></span></label>
           <input type="text" name="size" value="{{$cloth.Size}}" required
                  placeholder="例：110、M"
-                 class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400">
+                 class="w-full px-3 py-2.5">
         </div>
         <div>
-          <label class="block text-sm text-gray-600 mb-1">状态</label>
-          <select name="status" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400">
+          <label class="field-label">状态</label>
+          <select name="status" class="w-full px-3 py-2.5">
             {{range .statuses}}
             <option value="{{.Value}}" {{if eq .Value $cloth.Status}}selected{{end}}>{{.Label}}</option>
             {{end}}
@@ -108,37 +267,38 @@
     </div>
 
     <!-- 选填信息 -->
-    <div class="bg-white rounded-xl shadow-sm p-4 space-y-4">
-      <h3 class="text-sm font-medium text-gray-700">选填信息</h3>
+    <div class="card p-5 space-y-4 fade-up-2">
+      <div class="card-title">
+        <span>🏷️</span>
+        <span>更多信息（选填）</span>
+      </div>
 
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm text-gray-600 mb-1">颜色</label>
+          <label class="field-label">颜色</label>
           <input type="text" name="color" value="{{$cloth.Color}}"
                  placeholder="例：蓝色"
-                 class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400">
+                 class="w-full px-3 py-2.5">
         </div>
         <div>
-          <label class="block text-sm text-gray-600 mb-1">品牌</label>
+          <label class="field-label">品牌</label>
           <input type="text" name="brand" value="{{$cloth.Brand}}"
                  placeholder="例：优衣库"
-                 class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400">
+                 class="w-full px-3 py-2.5">
         </div>
       </div>
 
       <div>
-        <label class="block text-sm text-gray-600 mb-1">备注</label>
+        <label class="field-label">备注</label>
         <textarea name="notes" rows="3" placeholder="例：奶奶买的、有点小、搭配XX裤子..."
-                  class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400 resize-none">{{$cloth.Notes}}</textarea>
+                  class="w-full px-3 py-2.5 resize-none">{{$cloth.Notes}}</textarea>
       </div>
     </div>
 
     <!-- 提交按钮 -->
-    <div class="flex gap-3 pb-6">
-      <a href="/" class="flex-1 text-center bg-gray-100 text-gray-600 rounded-xl py-3 font-medium">取消</a>
-      <button type="submit" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white rounded-xl py-3 font-medium transition-colors">
-        保存
-      </button>
+    <div class="flex gap-3 pb-8 fade-up-3">
+      <a href="/" class="btn-cancel">取消</a>
+      <button type="submit" class="btn-save">保存</button>
     </div>
 
   </form>
