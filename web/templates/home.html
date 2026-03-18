@@ -1,0 +1,276 @@
+{{define "home"}}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宝宝小屋</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #fdf8f3;
+      --warm-white: #fff9f5;
+      --blush: #f9ede8;
+      --rose: #e8a89c;
+      --rose-deep: #d4786a;
+      --mint: #e8f5f0;
+      --mint-deep: #7bb8a4;
+      --caramel: #c9956b;
+      --caramel-light: #f5ead8;
+      --sky: #e8f0f8;
+      --sky-deep: #7a9ec8;
+      --lavender: #f0ecf8;
+      --lavender-deep: #9b8bc8;
+      --text-warm: #5c4a3a;
+      --text-muted: #a09080;
+      --text-light: #c8b8a8;
+      --shadow-soft: 0 4px 20px rgba(200, 150, 120, 0.12);
+      --shadow-hover: 0 12px 40px rgba(200, 150, 120, 0.22);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background-color: var(--cream);
+      background-image:
+        radial-gradient(ellipse at 15% 10%, rgba(249, 237, 232, 0.8) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, rgba(232, 245, 240, 0.6) 0%, transparent 45%),
+        radial-gradient(ellipse at 60% 30%, rgba(240, 236, 248, 0.4) 0%, transparent 35%),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a899' fill-opacity='0.03'%3E%3Ccircle cx='40' cy='40' r='3'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='70' cy='70' r='2'/%3E%3Ccircle cx='70' cy='10' r='1.5'/%3E%3Ccircle cx='10' cy='70' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+    .title-font { font-family: 'Noto Serif SC', serif; }
+
+    /* Hero section */
+    .hero {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+    .hero-icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+      display: block;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .hero-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-warm);
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .hero-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+    .deco-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 14px;
+    }
+    .deco-line span {
+      width: 28px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--rose), transparent);
+    }
+    .deco-dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--rose);
+      opacity: 0.6;
+    }
+
+    /* Nav cards */
+    .nav-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      width: 100%;
+      max-width: 520px;
+    }
+    .nav-card {
+      position: relative;
+      background: var(--warm-white);
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      border: 1.5px solid rgba(212, 178, 160, 0.18);
+      padding: 28px 20px 24px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .nav-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .nav-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: var(--shadow-hover);
+    }
+    .nav-card:hover::before { opacity: 1; }
+    .nav-card:active { transform: translateY(-2px) scale(0.99); }
+
+    .nav-card.wardrobe::before {
+      background: radial-gradient(ellipse at 50% 0%, rgba(232, 168, 156, 0.08) 0%, transparent 70%);
+    }
+    .nav-card.salary::before {
+      background: radial-gradient(ellipse at 50% 0%, rgba(123, 184, 164, 0.08) 0%, transparent 70%);
+    }
+
+    .card-icon-wrap {
+      width: 64px; height: 64px;
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      position: relative;
+    }
+    .wardrobe .card-icon-wrap {
+      background: linear-gradient(135deg, var(--blush), var(--caramel-light));
+      box-shadow: 0 4px 12px rgba(232, 168, 156, 0.3);
+    }
+    .salary .card-icon-wrap {
+      background: linear-gradient(135deg, var(--mint), #d4ede8);
+      box-shadow: 0 4px 12px rgba(123, 184, 164, 0.25);
+    }
+
+    .card-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-warm);
+      text-align: center;
+      line-height: 1.4;
+    }
+    .card-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .card-arrow {
+      position: absolute;
+      bottom: 14px;
+      right: 16px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem;
+      transition: transform 0.2s ease;
+    }
+    .wardrobe .card-arrow {
+      background: rgba(232, 168, 156, 0.2);
+      color: var(--rose-deep);
+    }
+    .salary .card-arrow {
+      background: rgba(123, 184, 164, 0.2);
+      color: var(--mint-deep);
+    }
+    .nav-card:hover .card-arrow { transform: translateX(3px); }
+
+    /* Decorative corner accent */
+    .card-accent {
+      position: absolute;
+      top: -10px; right: -10px;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      opacity: 0.07;
+    }
+    .wardrobe .card-accent { background: var(--rose-deep); }
+    .salary .card-accent { background: var(--mint-deep); }
+
+    /* Page enter animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero { animation: fadeUp 0.5s ease forwards; }
+    .nav-card { opacity: 0; animation: fadeUp 0.5s ease forwards; }
+    .nav-card:nth-child(1) { animation-delay: 0.15s; }
+    .nav-card:nth-child(2) { animation-delay: 0.25s; }
+
+    /* Footer */
+    .footer {
+      margin-top: 48px;
+      font-size: 0.7rem;
+      color: var(--text-light);
+      letter-spacing: 0.06em;
+      animation: fadeUp 0.5s 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    @media (max-width: 400px) {
+      .nav-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="hero-icon">🍼</span>
+    <h1 class="hero-title">宝宝小屋</h1>
+    <p class="hero-subtitle">温馨家庭管理中心</p>
+    <div class="deco-line">
+      <span></span>
+      <div class="deco-dot"></div>
+      <div class="deco-dot" style="background: var(--mint-deep);"></div>
+      <div class="deco-dot"></div>
+      <span></span>
+    </div>
+  </div>
+
+  <!-- Navigation Cards -->
+  <div class="nav-grid">
+
+    <!-- 宝宝衣橱 -->
+    <a href="/clothes" class="nav-card wardrobe">
+      <div class="card-accent"></div>
+      <div class="card-icon-wrap">🧺</div>
+      <div>
+        <div class="card-title">宝宝衣橱</div>
+        <div class="card-desc">管理宝宝的<br>每件小衣物</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <!-- 阿姨工资 -->
+    <a href="/nanny-salary" class="nav-card salary">
+      <div class="card-accent"></div>
+      <div class="card-icon-wrap">💰</div>
+      <div>
+        <div class="card-title">阿姨工资</div>
+        <div class="card-desc">工资结算<br>日历管理</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+  </div>
+
+  <div class="footer">宝宝平安健康快乐长大 · {{.year}}</div>
+
+</body>
+</html>
+{{end}}
